@@ -1,0 +1,184 @@
+DROP TABLE aluno;
+CREATE TABLE aluno (
+    id SERIAL, /*Serial preenche automaticamente o id ordenando*/
+    nome VARCHAR (255), /* Tamanho de texto maximo é 255 */
+    cpf char(11), /* Terá que possuir 11 textos*/
+    observacao TEXT, /* texto ilimitado*/
+    idade INTEGER, /* idade como inteiro*/
+    dinheiro NUMERIC(10,2), /* dinheiro do tipo numérico 1234567890,90*/
+    altura REAL, /* 1,82*/
+    ativo BOOLEAN, /* true  or false*/
+    data_nascimento DATE, /* data: */
+    hora_aula TIME, /* horário da aula */
+    matriculado_em TIMESTAMP /* data e hora da matricula */   
+)
+/* Table menor para relacionamento*/
+CREATE TABLE aluno(
+    id SERIAL Primary Key,
+    nome varchar(255) NOT NULL
+);
+
+INSERT INTO aluno (nome) VALUES ('Diogo')
+INSERT INTO aluno (nome) VALUES ('Vinicios')
+
+select * from aluno;
+
+DROP TABLE aluno_curso;
+CREATE TABLE aluno_curso(
+    aluno_id INTEGER,
+    curso_id INTEGER,
+    Primary Key (aluno_id,curso_id),
+    FOREIGN KEY (aluno_id) REFERENCES aluno(id),
+    FOREIGN KEY (curso_id) REFERENCES cursos (id)
+);
+SELECT * FROM aluno WHERE id = 1;
+SELECT * FROM cursos WHERE id = 1;
+
+SELECT * FROM aluno WHERE id = 2;
+SELECT * FROM cursos WHERE id = 1;
+
+INSERT INTO aluno_curso (aluno_id,curso_id) VALUES(1,1)
+INSERT INTO aluno_curso (aluno_id,curso_id) VALUES(2,1)
+
+
+INSERT INTO aluno (nome,cpf,observacao,idade,dinheiro,altura,ativo,data_nascimento,hora_aula,matriculado_em)
+VALUES ('Diego','12315668559','Lorem dolor sit amet consectetur adipiscing elit sed  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+35,100.50,1.81,TRUE,'1975-08-07','17:30:00','2022-09-13 09:53:00');
+
+SELECT * FROM aluno where id = 1
+
+UPDATE 
+aluno set nome = 'Nico',
+cpf =  '10948568732',
+observacao ='hehe Teste',
+idade = 38,
+dinheiro = 15.23,
+altura = 1.90,
+ativo = FALSE,
+data_nascimento = '1980-01-15',
+hora_aula = '13:00',
+matriculado_em = '2020-01-02 15:00:00'
+where id = 1;
+
+delete  from aluno where nome ='Nico'
+
+Select nome AS "Nome Do Aluno",
+        idade,
+        matriculado_em AS "Quando fui matriculado" 
+        from aluno;
+       
+ 
+ 
+INSERT INTO aluno (nome) values ('Vinicios Lopes');
+INSERT INTO aluno (nome) values ('Kaique Mendonça');
+INSERT INTO aluno (nome) values ('Gabriel Rezende');
+INSERT INTO aluno (nome) values ('Vanessa Camargo');
+INSERT INTO aluno (nome) values ('Diego Camargo');
+INSERT INTO aluno (nome) values ('Nico Alvez');
+
+SELECT * FROM aluno 
+Where
+nome <> 'Kaique Mendonça' /*<> != DIFERENTE */
+
+SELECT * from aluno
+where nome LIKE '_iego'
+
+delete from aluno where id = 8
+
+SELECT * 
+FROM aluno
+WHERE nome LIKE 'Diego'
+    OR nome LIKE 'Rodrigo'
+    OR nome LIKE 'Nico%'
+    
+    
+DROP TABLE cursos;
+CREATE TABLE cursos(
+    id INTEGER PRIMARY KEY ,
+    nome VARCHAR(255) NOT NULL
+);
+select * from cursos;
+
+INSERT INTO cursos (id,nome) VALUES (1,'HTML');
+INSERT INTO cursos (id,nome) VALUES (2,'CSS');
+INSERT INTO cursos (id,nome) VALUES (3,'JavaScript');
+
+
+
+DROP funcionarios;
+CREATE TABLE funcionarios (
+    id SERIAL   PRIMARY KEY,
+    matricula VARCHAR(10),
+    nome VARCHAR(255),
+    sobrenome VARCHAR(255)
+);
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M001','Diogo','Mascaranhas');
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M002','Vinícius','Dias');
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M003','Nico','Lopes');
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M004','João','Maranhão');
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M005','Diego','Silva');
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M006','Alberto','Ferreira');
+INSERT INTO funcionarios (matricula,nome,sobrenome) VALUES ('M007','Diogo','Oliveira');
+
+select * from funcionarios;
+
+select * from funcionarios order by nome,matricula desc
+select * from funcionarios order by 3,4,2 
+select * from funcionarios order by 4 desc, nome desc,2 ASC 
+
+
+SELECT * FROM funcionarios ORDER BY id LIMIT 5 OFFSET 3; /*Offset pula linha */
+
+SELECT COUNT(id),
+sum(id),
+max(id),
+min(id),
+avg(id) /*Se usar ROUND(AVG(id),0) Retornara somente o numero inteiro */ FROM funcionarios;
+
+SELECT DISTINCT nome  from   /*Distinct dados n duplicados   */
+ funcionarios order by nome;
+ 
+ SELECT  nome,sobrenome, COUNT(id) 
+ FROM funcionarios GROUP BY nome,sobrenome
+ ORDER BY nome;
+ 
+ SELECT cursos.nome,
+ count(aluno.id)
+ FROM aluno
+ JOIN  aluno_curso on aluno.id = aluno_curso.aluno_id
+ JOIN cursos ON cursos.id = aluno_curso.curso_id
+ GROUP BY 1
+ ORDER BY 1
+ 
+ 
+ 
+ SELECT * FROM aluno;
+ SELECT * FROM aluno_curso;
+ SELECT * FROM cursos;
+ 
+ SELECT * FROM cursos
+ left join aluno_curso on aluno_curso.curso_id = cursos.id
+ left join aluno on aluno.id = aluno_curso.aluno_id
+ 
+ 
+  
+ SELECT cursos.nome,
+    COUNT(aluno.id)
+    from cursos
+ left join aluno_curso on aluno_curso.curso_id = cursos.id
+ left join aluno on aluno.id = aluno_curso.aluno_id
+ GROUP BY (1)
+ 
+ 
+  SELECT cursos.nome,
+    COUNT(aluno.id)
+    from cursos
+ left join aluno_curso on aluno_curso.curso_id = cursos.id
+ left join aluno on aluno.id = aluno_curso.aluno_id
+  -- WHERE curso.nome = 'JavaScript'
+ GROUP BY (1)
+ HAVING COUNT(aluno.id) = 0 
+ 
+ SELECT nome from funcionarios
+ GROUP By nome
+ having count (id) >  1
